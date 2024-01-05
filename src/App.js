@@ -57,48 +57,38 @@ const events = [
 
 function App() {
   const [show, setShow] = useState(false);
-  const [pic, setPic] = useState(1);
-  const [course, setCourse] = useState(60);
   const [myEvents, setEvents] = useState(events)
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const startTime = useRef('00:00')
+  const pic = useRef(1);
+  const course = useRef(60);
+  const startVal = useRef(new Date());
 
   const handleSelectCourse = useCallback(
     (event) => {
-    console.log(event.target.value);
-    console.log(course);
-
-    setCourse(event.target.value);
-    console.log(course);
-
-    },[course]
+      course.current = event.target.value;
+    },[]
   )
-
+  const handleSelectPic = useCallback(
+    (event) => {
+      pic.current = event.target.value;
+    },[]
+  )
   const handleSelectSlot = useCallback(
-    ({ start, end, resourceId }) => {
-      if (start.getHours() < 7 ) {
+    ({ start, resourceId }) => {
+      if (start.getHours() < 7) {
         startTime.current = moment(start).hour(7).format().substring(0, 16);
+        startVal.current = moment(start).hour(7).toDate();
+      } else if (start.getHours() >= 22) {
+        return;
       } else {
         startTime.current = moment(start).format().substring(0, 16);
+        startVal.current = moment(start).toDate();
       }
-
-      //console.log(startTime.current)
-      setPic(resourceId)
+      pic.current = resourceId;
       setShow(true)
-      /*
-      const title = window.prompt('New Event Name')
-      if (title) {
-        setEvents((prev) => [...prev,
-          {
-            start: start,
-            end: end,
-            title: title,
-            resourceId: resourceId
-          }
-        ])
-      }*/
     },
     []
   )
@@ -110,8 +100,29 @@ function App() {
 
   const handleReservation = useCallback(
     () => {
-      console.log(pic);
-      console.log(course);
+      const endVal = moment(startVal.current).clone().add(course.current, 'minutes').toDate();
+      if (endVal.getHours() >= 22 && endVal.getMinutes() > 0) {
+        return;
+      }
+      const getTitle = (selected) => {
+
+          if (selected == 60) {
+            return '60分 全身痩せ';
+          } else if (selected == 45) {
+            return '45分 腹痩せ';
+          } else {
+            return '30分 足痩せ';
+          }
+      };
+
+      setEvents((prev) => [...prev,
+        {
+          start: startVal.current,
+          end: endVal,
+          title: getTitle(course.current),
+          resourceId: pic.current
+        }
+      ])
       setShow(false);
     },
     []
@@ -154,7 +165,7 @@ function App() {
           <Form>
             <Form.Group className="mb-3" controlId="ControlPic">
               <Form.Label>担当</Form.Label>
-              <Form.Select aria-label="select" defaultValue={pic} onChange={setPic}>
+              <Form.Select aria-label="select" defaultValue={pic.current} onChange={handleSelectPic}>
                 <option value="1">トレーナーA</option>
                 <option value="2">トレーナーB</option>
                 <option value="3">トレーナーC</option>
@@ -173,7 +184,7 @@ function App() {
 
             <Form.Group className="mb-3" controlId="ControlCourse">
               <Form.Label>コース</Form.Label>
-              <Form.Select aria-label="select" onChange={handleSelectCourse} defaultValue={course}>
+              <Form.Select aria-label="select" defaultValue={course.current} onChange={handleSelectCourse}>
                 <option value="60">60分 全身痩せ</option>
                 <option value="45">45分 腹痩せ</option>
                 <option value="30">30分 足痩せ</option>
