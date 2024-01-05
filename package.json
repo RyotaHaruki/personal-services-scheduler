@@ -3,17 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bootstrap": "^5.3.2",
     "moment": "2.24.0",
-    "react": "16.13.1",
+    "react": "^16.14.0",
+    "react-app-rewired": "^2.2.1",
     "react-big-calendar": "0.24.1",
-    "react-dom": "16.13.1",
+    "react-bootstrap": "^2.9.2",
+    "react-datetime-picker": "^5.6.0",
+    "react-dom": "^16.13.1",
+    "react-modal": "^3.16.1",
     "react-scripts": "3.4.1"
   },
   "scripts": {
     "start": "NODE_OPTIONS='--openssl-legacy-provider' react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "build": "NODE_OPTIONS='--openssl-legacy-provider' react-scripts build",
+    "test": "NODE_OPTIONS='--openssl-legacy-provider' react-scripts test --env=jsdom",
+    "eject": "NODE_OPTIONS='--openssl-legacy-provider' react-scripts eject"
   },
   "browserslist": {
     "production": [
